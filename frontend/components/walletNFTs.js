@@ -2,6 +2,9 @@ import React from "react";
 import axios from "axios";
 import { shortenAddress } from "../utils/shortenAddress";
 import { useState, useEffect } from "react";
+import { Input, Select, CryptoLogos } from "@web3uikit/core";
+import { Table } from "@web3uikit/core";
+import { Reload } from "@web3uikit/icons";
 
 const WalletNFTs = ({
   address,
@@ -80,7 +83,57 @@ const WalletNFTs = ({
 
   return (
     <div>
-      <div>
+      <div className="tabHeading">
+        NFT Portfolio <Reload onClick={getWalletNFTs} />
+      </div>
+      <div className="filters">
+        <Input
+          id="NameF"
+          label="Name Filter"
+          labelBgColor="rbg(33, 33, 33)"
+          value={nameFilter}
+          style={{}}
+          onChange={(e) => setNameFilter(e.target.value)}
+        />
+        <Input
+          id="IdF"
+          label="Id Filter"
+          labelBgColor="rbg(33, 33, 33)"
+          value={idFilter}
+          style={{}}
+          onChange={(e) => setIdFilter(e.target.value)}
+        />
+      </div>
+      <div className="nftList">
+        {filteredNFTs.length > 0 &&
+          filteredNFTs.map((e) => {
+            return (
+              <div className="nftInfo">
+                {e.image && (
+                  <img src={e.image} alt="nft" width="100" height="100"></img>
+                )}
+                <p>
+                  <b>Name: </b>
+                  {e.name}
+                </p>
+                <p>
+                  <b>Token Id: </b>
+                  {(e.token_id).slice(0,5)}
+                </p>
+                <p>
+                  <b>Contract Type: </b>
+                  {e.contract_type}
+                </p>
+                <p>
+                  <b>Address: </b>
+                  {shortenAddress(e.token_address)}
+                </p>
+              </div>
+            );
+          })}
+      </div>
+
+      {/* <div>
         <h1>NFT Transfer History</h1>
         <div>
           <button onClick={getWalletNFTs}>Fetch NFTs</button>
@@ -122,7 +175,7 @@ const WalletNFTs = ({
               );
             })}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

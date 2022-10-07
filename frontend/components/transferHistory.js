@@ -2,6 +2,9 @@ import React from 'react'
 import axios from 'axios'
 import { shortenAddress } from "../utils/shortenAddress"; 
 
+import { Table } from "@web3uikit/core";
+import { Reload } from "@web3uikit/icons";
+
 const TransferHistory = ({ address, chain, transfers, setTransfers }) => {
 
   async function getTokenTransfers() {
@@ -21,7 +24,39 @@ const TransferHistory = ({ address, chain, transfers, setTransfers }) => {
 
   return (
     <div>
-      <h1>Transfer History</h1>
+      <div className="tabHeading">
+        Transfer History <Reload onClick={getTokenTransfers} />
+      </div>
+      <div>
+        {transfers.length > 0 && (
+          <Table
+            pageSize={20}
+            noPagination={false}
+            style={{ width: "1070px" }}
+            columnsConfig="200px 150px 150px 150px 150px 150px 150px"
+            data={transfers.map((e) => [
+              e.name,
+              e.symbol,
+              shortenAddress(e.address),
+              (Number(e.value) / Number(`1E${e.decimals}`)).toFixed(4),
+              shortenAddress(e.from_address),
+              shortenAddress(e.to_address),
+              e.block_timestamp.slice(0, 10),
+            ])}
+            header={[
+              <span>Name</span>,
+              <span>Symbol</span>,
+              <span>Token Address</span>,
+              <span>Amount</span>,
+              <span>From</span>,
+              <span>To</span>,
+              <span>Date</span>,
+            ]}
+          />
+        )}
+      </div>
+
+      {/* <h1>Transfer History</h1>
       <div>
         <button onClick={getTokenTransfers}>Fetch Transfers</button>
 
@@ -46,12 +81,12 @@ const TransferHistory = ({ address, chain, transfers, setTransfers }) => {
                 </td>
                 <td>{shortenAddress(e.from_address)}</td>
                 <td>{shortenAddress(e.to_address)}</td>
-                <td>{e.block_timestamp}</td>
+                <td>{(e.block_timestamp)..slice(0, 10)}</td>
               </tr>
             );
           })}
         </table>
-      </div>
+      </div> */}
     </div>
   );
 }

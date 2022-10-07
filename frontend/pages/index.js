@@ -9,6 +9,7 @@ import Tokens from '../components/tokens';
 import PortfolioValue from '../components/portfolioValue'
 import TransferHistory from '../components/transferHistory'
 import WalletNFTs from '../components/walletNFTs'
+import {Avatar, TabList, Tab} from "@web3uikit/core"
 
 export default function Home() {
   const [address, setAddress] = useState('')
@@ -21,7 +22,7 @@ export default function Home() {
   const [filteredNFTs, setFilteredNFTs] = useState([])
 
   return (
-    <div>
+    <div className="App">
       <div>
         <WalletInputs
           chain={chain}
@@ -29,39 +30,50 @@ export default function Home() {
           address={address}
           setAddress={setAddress}
         />
-        <NativeToken
-          address={address}
-          chain={chain}
-          nativeBalance={nativeBalance}
-          setNativeBalance={setNativeBalance}
-          nativePrice={nativePrice}
-          setNativePrice={setNativePrice}
-        />
-        <Tokens
-          address={address}
-          chain={chain}
-          tokens={tokens}
-          setTokens={setTokens}
-        />
-        <PortfolioValue
-          nativePrice={nativePrice}
-          tokens={tokens}
-        />
-        <TransferHistory
-          address={address}
-          chain={chain}
-          transfers={transfers}
-          setTransfers={setTransfers}
-        />
-        <WalletNFTs
-          address={address}
-          chain={chain}
-          walletNFTs={walletNFTs}
-          setWalletNFTs={setWalletNFTs}
-          filteredNFTs={filteredNFTs}
-          setFilteredNFTs={setFilteredNFTs}
-        />
+
+        <div className="contents">
+          <PortfolioValue
+            nativePrice={nativePrice}
+            tokens={tokens} 
+          />
+          <TabList>
+            <Tab tabKey={1} tabName={"Tokens"}>
+              <NativeToken
+                address={address}
+                chain={chain}
+                nativeBalance={nativeBalance}
+                setNativeBalance={setNativeBalance}
+                nativePrice={nativePrice}
+                setNativePrice={setNativePrice}
+              />
+              <Tokens
+                address={address}
+                chain={chain}
+                tokens={tokens}
+                setTokens={setTokens}
+              />
+            </Tab>
+            <Tab tabKey={2} tabName={"Transfers"}>
+              <TransferHistory
+                address={address}
+                chain={chain}
+                transfers={transfers}
+                setTransfers={setTransfers}
+              />
+            </Tab>
+            <Tab tabKey={3} tabName={"NFTs"}>
+              <WalletNFTs
+                address={address}
+                chain={chain}
+                walletNFTs={walletNFTs}
+                setWalletNFTs={setWalletNFTs}
+                filteredNFTs={filteredNFTs}
+                setFilteredNFTs={setFilteredNFTs}
+              />
+            </Tab>
+          </TabList>
+        </div>
       </div>
     </div>
-  )
+  );
 }
