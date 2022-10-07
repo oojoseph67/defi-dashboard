@@ -15,10 +15,12 @@ const PortfolioValue = ({ nativePrice, tokens }) => {
 
   return (
     <div>
-      <h1>Portfolio Total Value</h1>
-      <p>
-        <span>Total Balance: ${totalValue}</span>
-      </p>
+      <div className="totalValue">
+        <h1>Portfolio Total Value</h1>
+        <p>
+          <span>Total Balance: ${totalValue}</span>
+        </p>
+      </div>
     </div>
   );
 };

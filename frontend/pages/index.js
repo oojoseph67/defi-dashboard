@@ -1,25 +1,26 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import axios from 'axios'
-import { useState } from 'react'
+import Head from "next/head";
+import Image from "next/image";
+import axios from "axios";
+import { useState } from "react";
 
-import WalletInputs from '../components/walletInputs'
-import NativeToken from '../components/nativeTokens';
-import Tokens from '../components/tokens';
-import PortfolioValue from '../components/portfolioValue'
-import TransferHistory from '../components/transferHistory'
-import WalletNFTs from '../components/walletNFTs'
-import {Avatar, TabList, Tab} from "@web3uikit/core"
+import WalletInputs from "../components/walletInputs";
+import NativeToken from "../components/nativeTokens";
+import Tokens from "../components/tokens";
+import PortfolioValue from "../components/portfolioValue";
+import TransferHistory from "../components/transferHistory";
+import WalletNFTs from "../components/walletNFTs";
+import { Avatar, TabList, Tab } from "@web3uikit/core";
+import { shortenAddress } from "../utils/shortenAddress";
 
 export default function Home() {
-  const [address, setAddress] = useState('')
-  const [chain, setChain] = useState('0x1')
-  const [nativeBalance, setNativeBalance] = useState(0)
-  const [nativePrice, setNativePrice] = useState(0)
+  const [address, setAddress] = useState("");
+  const [chain, setChain] = useState("0x1");
+  const [nativeBalance, setNativeBalance] = useState(0);
+  const [nativePrice, setNativePrice] = useState(0);
   const [tokens, setTokens] = useState([]);
   const [transfers, setTransfers] = useState([]);
   const [walletNFTs, setWalletNFTs] = useState([]);
-  const [filteredNFTs, setFilteredNFTs] = useState([])
+  const [filteredNFTs, setFilteredNFTs] = useState([]);
 
   return (
     <div className="App">
@@ -30,12 +31,21 @@ export default function Home() {
           address={address}
           setAddress={setAddress}
         />
+        <br></br>
 
         <div className="contents">
-          <PortfolioValue
-            nativePrice={nativePrice}
-            tokens={tokens} 
-          />
+          <div className="walletInfo">
+            <div>
+              <Avatar isRounded size={130} theme="image" />
+              <h2>{shortenAddress(address)}</h2>
+            </div>
+
+            <PortfolioValue
+              nativePrice={nativePrice}
+              tokens={tokens}
+            />
+          </div>
+
           <TabList>
             <Tab tabKey={1} tabName={"Tokens"}>
               <NativeToken
