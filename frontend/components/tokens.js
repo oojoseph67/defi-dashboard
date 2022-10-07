@@ -3,34 +3,48 @@ import axios from "axios";
 import { shortenAddress } from "../utils/shortenAddress";
 import { Table } from "@web3uikit/core";
 import { Reload } from "@web3uikit/icons";
+import { useEffect, useState } from "react";
+
+const { default: Moralis } = require("moralis");
 
 const Tokens = ({ address, chain, tokens, setTokens }) => {
+  const apiKey = process.env.NEXT_PUBLIC_MORALIS_API_KEY;
+
+   useEffect(() => {
+    if (address) {
+      getTokenBalances();
+    }
+   }, [setTokens]);
+  
   async function getTokenBalances() {
-    // const response = await axios.get(
-    //   `http://localhost:8000/nativeBalance?address=${wallet}&chain=${chain}`
-    // );
+    try {
+      await Moralis.start({ apiKey: apiKey });
 
-    console.log("address", address);
-    console.log("chain", chain);
+      console.log("address", address);
+      console.log("chain", chain);
+      console.log("breakpoint");
 
-    const response = await axios.get("http://localhost:8000/tokenBalance", {
-      params: {
-        address: address,
-        chain: chain,
-      },
-    });
+      const response = await axios.get("http://localhost:8000/tokenBalance", {
+        params: {
+          address: address,
+          chain: chain,
+        },
+      });
 
-    if (response.data) {
-      let t = response.data;
+      if (response.data) {
+        let t = response.data;
 
-      for (let i = 0; i < t.length; i++) {
-        t[i].bal = (
-          Number(t[i].balance) / Number(`1E${t[i].decimals}`)
-        ).toFixed(4);
-        t[i].usd = (t[i].bal * Number(t[i].usd)).toFixed(2);
-        t[i].address = t[i].token_address;
+        for (let i = 0; i < t.length; i++) {
+          t[i].bal = (
+            Number(t[i].balance) / Number(`1E${t[i].decimals}`)
+          ).toFixed(4);
+          t[i].usd = (t[i].bal * Number(t[i].usd)).toFixed(2);
+          t[i].address = t[i].token_address;
+        }
+        setTokens(t);
       }
-      setTokens(t);
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -43,8 +57,9 @@ const Tokens = ({ address, chain, tokens, setTokens }) => {
       ) : (
         <div />
       )}
+      <h3>Take note when interacting with some contract as they may be scam token</h3>
 
-      {tokens.length > 0 && (
+      {tokens.length > 0 ? (
         <Table
           pageSize={10}
           noPagination={false}
@@ -65,6 +80,10 @@ const Tokens = ({ address, chain, tokens, setTokens }) => {
             <span>Value</span>,
           ]}
         />
+      ) : (
+          <div>
+            No Tokens Found
+          </div>
       )}
 
       {/* <p>

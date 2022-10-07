@@ -6,6 +6,8 @@ import { Input, Select, CryptoLogos } from "@web3uikit/core";
 import { Table } from "@web3uikit/core";
 import { Reload } from "@web3uikit/icons";
 
+const { default: Moralis } = require("moralis");
+
 const WalletNFTs = ({
   address,
   chain,
@@ -14,8 +16,16 @@ const WalletNFTs = ({
   filteredNFTs,
   setFilteredNFTs,
 }) => {
+  const apiKey = process.env.NEXT_PUBLIC_MORALIS_API_KEY;
+
   const [nameFilter, setNameFilter] = useState("");
   const [idFilter, setIdFilter] = useState("");
+
+  useEffect(() => {
+    if (address) {
+      getWalletNFTs();
+    }
+  }, [setFilteredNFTs, setWalletNFTs]);
 
   useEffect(() => {
     if (idFilter.length === 0 && nameFilter.length === 0) {
@@ -44,8 +54,10 @@ const WalletNFTs = ({
   }, [nameFilter, idFilter]);
 
   async function getWalletNFTs() {
+    await Moralis.start({ apiKey: apiKey });
     console.log("address", address);
     console.log("chain", chain);
+    console.log("breakpoint");
 
     const response = await axios.get("http://localhost:8000/nftBalance", {
       params: {
@@ -105,7 +117,7 @@ const WalletNFTs = ({
         />
       </div>
       <div className="nftList">
-        {filteredNFTs.length > 0 &&
+        {filteredNFTs.length > 0 ? (
           filteredNFTs.map((e) => {
             return (
               <div className="nftInfo">
@@ -118,7 +130,7 @@ const WalletNFTs = ({
                 </p>
                 <p>
                   <b>Token Id: </b>
-                  {(e.token_id).slice(0,5)}
+                  {e.token_id.slice(0, 5)}
                 </p>
                 <p>
                   <b>Contract Type: </b>
@@ -130,7 +142,10 @@ const WalletNFTs = ({
                 </p>
               </div>
             );
-          })}
+          })
+        ) : (
+          <div>No NFTs found</div>
+        )}
       </div>
 
       {/* <div>

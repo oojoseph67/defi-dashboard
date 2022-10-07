@@ -1,7 +1,42 @@
 import React from "react";
 import { Input, Select, CryptoLogos } from "@web3uikit/core";
+import { shortenAddress } from "../utils/shortenAddress";
+import { useState, useEffect } from "react";
 
-const WalletInputs = ({ chain, address, setChain, setAddress }) => {
+import {
+  ConnectWallet,
+  ChainId,
+  useAddress,
+  useMetamask,
+  useDisconnect,
+  useNetworkMismatch,
+  useNetwork,
+  useContract,
+} from "@thirdweb-dev/react";
+
+const WalletInputs = ({
+  chain,
+  address,
+  setChain,
+  setAddress,
+  disconnect,
+  connectWithMetamask,
+}) => {
+  const isMismatched = useNetworkMismatch(); // switch to desired chain
+  const [, switchNetwork] = useNetwork();
+
+  useEffect(() => {
+    networkCheck();
+  }, [address, setChain, disconnect]);
+
+  async function networkCheck() {
+    if (chain != "0x1" && chain != "0x38") {
+      if (isMismatched) {
+        await switchNetwork(ChainId.Mainnet);
+      }
+    }
+  }
+
   return (
     <div className="header">
       <div className="title">
@@ -9,14 +44,34 @@ const WalletInputs = ({ chain, address, setChain, setAddress }) => {
         <h1>DeFi Dashboard</h1>
       </div>
       <div className="walletInputs">
-        <Input
+        {/* <Input
           id="Wallet"
           label="Wallet Address"
           labelBgColor="rbg(33, 33, 33)"
           value={address}
           style={{ height: "50px" }}
           onChange={(e) => setAddress(e.target.value)}
-        />
+        /> */}
+
+        <p>
+          {/* {shortenAddress(address)} */}
+          {!address ? (
+            <div>
+              <h6>...</h6>
+            </div>
+          ) : (
+            <h2>{shortenAddress(address)}</h2>
+          )}
+        </p>
+        {/* {!address ? (
+          <div>
+            <button onClick={connectWithMetamask}>Connect Wallet</button>
+          </div>
+        ) : (
+          <button onClick={disconnect}>Disconnect</button>
+        )} */}
+
+        <button onClick={disconnect}>Disconnect</button>
 
         <Select
           defaultOptionIndex={0}

@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { Table } from "@web3uikit/core"
 import { Reload } from "@web3uikit/icons"
+import { useEffect, useState } from "react";
 
 const NativeToken = ({
   address,
@@ -11,6 +12,14 @@ const NativeToken = ({
   nativePrice,
   setNativePrice,
 }) => {
+
+  useEffect(() => {
+    if (address) {
+      getNativeBalance();
+    }
+    getNativeBalance() 
+  }, [setNativeBalance, setNativePrice, nativeBalance, nativePrice])
+
   async function getNativeBalance() {
     // const response = await axios.get(
     //   `http://localhost:8000/nativeBalance?address=${wallet}&chain=${chain}`
@@ -18,6 +27,7 @@ const NativeToken = ({
 
     console.log("address", address);
     console.log("chain", chain);
+    console.log("breakpoint");
 
     const response = await axios.get("http://localhost:8000/nativeBalance", {
       params: {

@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import WalletInputs from "../components/walletInputs";
 import NativeToken from "../components/nativeTokens";
@@ -11,9 +11,26 @@ import TransferHistory from "../components/transferHistory";
 import WalletNFTs from "../components/walletNFTs";
 import { Avatar, TabList, Tab } from "@web3uikit/core";
 import { shortenAddress } from "../utils/shortenAddress";
+import {
+  ConnectWallet,
+  ChainId,
+  useAddress,
+  useMetamask,
+  useDisconnect,
+  useNetworkMismatch,
+  useNetwork,
+  useContract,
+} from "@thirdweb-dev/react";
 
 export default function Home() {
-  const [address, setAddress] = useState("");
+  // const [address, setAddress] = useState(useAddress());
+
+  const address = useAddress();
+  const connectWithMetamask = useMetamask();
+  const disconnect = useDisconnect();
+  const isMismatched = useNetworkMismatch(); // switch to desired chain
+  const [, switchNetwork] = useNetwork();
+
   const [chain, setChain] = useState("0x1");
   const [nativeBalance, setNativeBalance] = useState(0);
   const [nativePrice, setNativePrice] = useState(0);
@@ -22,6 +39,34 @@ export default function Home() {
   const [walletNFTs, setWalletNFTs] = useState([]);
   const [filteredNFTs, setFilteredNFTs] = useState([]);
 
+  console.log("address", address);
+  useEffect(() => {
+    // if (address) {
+    //   getNativeBalance();
+    //   getNativePrice();
+    //   getTokens();
+    //   getTransfers();
+    //   getWalletNFTs();
+    // }
+    // networkCheck();
+  }, [address, chain, nativeBalance, nativePrice, tokens, transfers, walletNFTs, filteredNFTs]);
+
+  // async function networkCheck() {
+  //   if (chain != "0x1" && chain != "0x38") {
+  //     if (isMismatched) {
+  //       await switchNetwork(ChainId.Mainnet);
+  //     }
+  //   }
+  // }
+
+  if (!address) {
+    return (
+      <div>
+        <button onClick={connectWithMetamask}>Connect Wallet</button>
+      </div>
+    );
+  }
+
   return (
     <div className="App">
       <div>
@@ -29,7 +74,9 @@ export default function Home() {
           chain={chain}
           setChain={setChain}
           address={address}
-          setAddress={setAddress}
+          disconnect={disconnect}
+          connectWithMetamask={connectWithMetamask}
+          // setAddress={setAddress}
         />
         <br></br>
 
@@ -37,13 +84,16 @@ export default function Home() {
           <div className="walletInfo">
             <div>
               <Avatar isRounded size={130} theme="image" />
-              <h2>{shortenAddress(address)}</h2>
+              {!address ? (
+                <div>
+                  <h6>No Wallet Connected</h6>
+                </div>
+              ) : (
+                <h2>{shortenAddress(address)}</h2>
+              )}
             </div>
 
-            <PortfolioValue
-              nativePrice={nativePrice}
-              tokens={tokens}
-            />
+            <PortfolioValue nativePrice={nativePrice} tokens={tokens} />
           </div>
 
           <TabList>

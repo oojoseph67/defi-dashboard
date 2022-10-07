@@ -4,21 +4,38 @@ import { shortenAddress } from "../utils/shortenAddress";
 
 import { Table } from "@web3uikit/core";
 import { Reload } from "@web3uikit/icons";
+import { useEffect, useState } from 'react';
+
+
+const { default: Moralis } = require("moralis");
 
 const TransferHistory = ({ address, chain, transfers, setTransfers }) => {
+  const apiKey = process.env.NEXT_PUBLIC_MORALIS_API_KEY;
+  
+   useEffect(() => {
+    if (address) {
+      getTokenTransfers();
+    }
+   }, [setTransfers]);
 
   async function getTokenTransfers() {
-    console.log("address", address);
-    console.log("chain", chain);
+    try {
+      await Moralis.start({ apiKey: apiKey });
+      console.log("address", address);
+      console.log("chain", chain);
+      console.log("breakpoint");
 
-    const response = await axios.get("http://localhost:8000/tokenTransfers", {
-      params: {
-        address: address,
-        chain: chain,
-      },
-    });
-    if (response.data) {
-      setTransfers(response.data);
+      const response = await axios.get("http://localhost:8000/tokenTransfers", {
+        params: {
+          address: address,
+          chain: chain,
+        },
+      });
+      if (response.data) {
+        setTransfers(response.data);
+      }
+    } catch (error) { 
+      
     }
   }
 
@@ -28,7 +45,7 @@ const TransferHistory = ({ address, chain, transfers, setTransfers }) => {
         Transfer History <Reload onClick={getTokenTransfers} />
       </div>
       <div>
-        {transfers.length > 0 && (
+        {transfers.length > 0 ? (
           <Table
             pageSize={20}
             noPagination={false}
@@ -38,7 +55,7 @@ const TransferHistory = ({ address, chain, transfers, setTransfers }) => {
               e.name,
               e.symbol,
               shortenAddress(e.address),
-              (Number(e.value) / Number(`1E${e.decimals}`)).toFixed(4),
+              ((Number(e.value) / Number(`1E${e.decimals}`)).toFixed(4)).slice(0,10),
               shortenAddress(e.from_address),
               shortenAddress(e.to_address),
               e.block_timestamp.slice(0, 10),
@@ -53,6 +70,8 @@ const TransferHistory = ({ address, chain, transfers, setTransfers }) => {
               <span>Date</span>,
             ]}
           />
+        ) : (
+            <div>No transfers found</div>
         )}
       </div>
 
