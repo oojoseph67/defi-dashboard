@@ -160,7 +160,7 @@ app.get("/nftBalance", async (req, res) => {
       chain,
     });
 
-   const userNFTs = response.data.result
+    const userNFTs = response.data.result;
 
     res.send(userNFTs);
   } catch (e) {

@@ -31,9 +31,15 @@ const WalletInputs = ({
 
   async function networkCheck() {
     if (chain != "0x1" && chain != "0x38") {
-      if (isMismatched) {
-        await switchNetwork(ChainId.Mainnet);
-      }
+      // if (isMismatched) {
+      //   await switchNetwork(ChainId.Mainnet);
+      // }
+       if (chain == "0x5") {
+         switchNetwork(ChainId.Goerli);
+       }
+       if (chain == "0x13881") {
+         switchNetwork(ChainId.Mumbai);
+       }
     }
   }
 
