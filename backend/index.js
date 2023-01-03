@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const { default: Moralis } = require("moralis");
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 require("dotenv").config();
 
